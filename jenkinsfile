@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+    
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Target deployment environment')
+        booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Whether to run tests during build')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Checking out branch: ${params.BRANCH_NAME}"
+                // Your checkout commands here
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                echo "Building for ${params.ENVIRONMENT} environment"
+                // Your build commands here
+            }
+        }
+        
+        stage('Test') {
+            when {
+                expression { return params.RUN_TESTS }
+            }
+            steps {
+                echo "Running tests..."
+                // Your test commands here
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                echo "Deploying to ${params.ENVIRONMENT}..."
+                // Your deployment commands here
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "Pipeline executed successfully!"
+        }
+        failure {
+            echo "Pipeline execution failed!"
+        }
+    }
+}
